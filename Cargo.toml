@@ -37,6 +37,10 @@ name = "series"
 crate-type = ["cdylib"]
 
 [[example]]
+name = "stress"
+crate-type = ["cdylib"]
+
+[[example]]
 name = "scalar"
 crate-type = ["cdylib"]
 
