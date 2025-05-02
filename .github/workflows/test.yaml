@@ -10,8 +10,8 @@ jobs:
     name: Testing ubuntu-latest
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v3
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/bin/
@@ -26,7 +26,7 @@ jobs:
       - run: cargo build --examples --verbose
       - run: make test
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ubuntu-latest-exts
           path: |
@@ -36,7 +36,7 @@ jobs:
             target/debug/examples/libseries.*
   test-linux-cross:
     name: Testing on ${{matrix.target}}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -50,8 +50,8 @@ jobs:
           - armv7-unknown-linux-gnueabihf
           #- armv7-unknown-linux-musleabihf # "cannot produce cdylib ... as the target `armv7-unknown-linux-musleabihf` does not support these crate types"
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v3
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/bin/
@@ -69,7 +69,7 @@ jobs:
         env:
           RUSTFLAGS: "-C target-feature=-crt-static"
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.target }}
           path: |
@@ -81,8 +81,8 @@ jobs:
     name: Testing macos-latest
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v3
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/bin/
@@ -97,7 +97,7 @@ jobs:
       - run: cargo build --examples --verbose
       - run: make test python=/usr/local/opt/python@3/libexec/bin/python
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: macos-latest-exts
           path: |
@@ -109,8 +109,8 @@ jobs:
     name: Testing windows-latest
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v3
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/bin/
@@ -125,7 +125,7 @@ jobs:
       - run: cargo build --examples --verbose
       - run: make test
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: windows-latest-exts
           path: |
