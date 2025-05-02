@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
       - uses: actions/cache@v4
         with:
           path: |
@@ -94,8 +95,9 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
+      - uses: astral-sh/setup-uv@v6
       - run: cargo build --examples --verbose
-      - run: make test python=/usr/local/opt/python@3/libexec/bin/python
+      - run: make test
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -122,6 +124,7 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
+      - uses: astral-sh/setup-uv@v6
       - run: cargo build --examples --verbose
       - run: make test
       - name: Upload artifacts
