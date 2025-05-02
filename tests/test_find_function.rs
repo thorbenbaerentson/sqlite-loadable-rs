@@ -61,7 +61,8 @@ impl<'vtab> VTab<'vtab> for FindTable {
 impl<'vtab> VTabFind<'vtab> for FindTable {
     fn find_function(&mut self, _argc: i32, name: &str) -> Option<FindResult> {
         if name == "wrapped" {
-            return Some((scalar_function_raw(wrapped), None, None));
+          let (f, p) = scalar_function_raw(wrapped);
+            return Some((f, None, Some(p.cast())));
         }
         None
     }

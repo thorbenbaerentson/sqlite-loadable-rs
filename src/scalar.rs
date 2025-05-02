@@ -214,12 +214,12 @@ pub fn delete_scalar_function(
 // TODO only used for find_function, probably can combine with that return type?
 pub fn scalar_function_raw<F>(
     x_func: F,
-) -> unsafe extern "C" fn(*mut sqlite3_context, i32, *mut *mut sqlite3_value)
+) -> (unsafe extern "C" fn(*mut sqlite3_context, i32, *mut *mut sqlite3_value), *mut F)
 where
     F: Fn(*mut sqlite3_context, &[*mut sqlite3_value]) -> Result<()>,
 {
     // TODO: how does x_func even get called here???
-    let _function_pointer: *mut F = Box::into_raw(Box::new(x_func));
+    let function_pointer: *mut F = Box::into_raw(Box::new(x_func));
 
     unsafe extern "C" fn x_func_wrapper<F>(
         context: *mut sqlite3_context,
@@ -240,7 +240,7 @@ where
         }
     }
 
-    x_func_wrapper::<F>
+    (x_func_wrapper::<F>, function_pointer)
 }
 pub fn scalar_function_raw_with_aux<F, T>(
     x_func: F,
