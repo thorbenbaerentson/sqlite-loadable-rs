@@ -127,7 +127,7 @@ impl VTabCursor for FindCursor {
     }
 }
 
-#[sqlite_entrypoint]
+#[unsafe(sqlite_entrypoint)]
 pub fn sqlite3_find_init(db: *mut sqlite3) -> Result<()> {
     api::overload_function(db, "wrapped", 1)?;
     define_table_function_with_find::<FindTable>(db, "find", None)?;

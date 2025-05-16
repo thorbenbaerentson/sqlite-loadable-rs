@@ -173,7 +173,7 @@ impl VTabCursor for InCursor {
     }
 }
 
-#[sqlite_entrypoint]
+#[unsafe(sqlite_entrypoint)]
 pub fn sqlite3_in_init(db: *mut sqlite3) -> Result<()> {
     define_table_function::<InTable>(db, "vtab_in", None)?;
     Ok(())

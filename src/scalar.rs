@@ -112,7 +112,7 @@ where
         argv: *mut *mut sqlite3_value,
     ) where
         F: Fn(*mut sqlite3_context, &[*mut sqlite3_value]) -> Result<()>,
-    {
+    { unsafe {
         let boxed_function: *mut F = sqlite3ext_user_data(context).cast::<F>();
         // .collect slows things waaaay down, so stick with slice for now
         let args = slice::from_raw_parts(argv, argc as usize);
@@ -124,7 +124,7 @@ where
                 }
             }
         }
-    }
+    }}
     create_function_v2(
         db,
         name,
@@ -163,7 +163,7 @@ where
         argv: *mut *mut sqlite3_value,
     ) where
         F: Fn(*mut sqlite3_context, &[*mut sqlite3_value], &T) -> Result<()>,
-    {
+    { unsafe {
         let x = sqlite3ext_user_data(context).cast::<(*mut F, *mut T)>();
         let boxed_function = (*x).0;
         let aux = (*x).1;
@@ -179,7 +179,7 @@ where
             }
         }
         // Box::into_raw(b);
-    }
+    }}
     create_function_v2(
         db,
         name,
@@ -228,7 +228,7 @@ where
         argv: *mut *mut sqlite3_value,
     ) where
         F: Fn(*mut sqlite3_context, &[*mut sqlite3_value]) -> Result<()>,
-    {
+    { unsafe {
         let boxed_function: *mut F = sqlite3ext_user_data(context).cast::<F>();
         let args = slice::from_raw_parts(argv, argc as usize);
         match (*boxed_function)(context, args) {
@@ -239,7 +239,7 @@ where
                 }
             }
         }
-    }
+    }}
 
     (x_func_wrapper::<F>, function_pointer)
 }
@@ -264,7 +264,7 @@ where
         argv: *mut *mut sqlite3_value,
     ) where
         F: Fn(*mut sqlite3_context, &[*mut sqlite3_value], &T) -> Result<()>,
-    {
+    { unsafe {
         let x = sqlite3ext_user_data(context).cast::<(*mut F, *mut T)>();
         let boxed_function = (*x).0;
         let aux = (*x).1;
@@ -280,7 +280,7 @@ where
             }
         }
         // Box::into_raw(b);
-    }
+    }}
 
     (x_func_wrapper::<F, T>, app_pointer.cast())
 }

@@ -150,7 +150,7 @@ impl VTabCursor for CharactersCursor {
     }
 }
 
-#[sqlite_entrypoint]
+#[unsafe(sqlite_entrypoint)]
 pub fn sqlite3_characters_init(db: *mut sqlite3) -> Result<()> {
     define_table_function::<CharactersTable>(db, "characters", None)?;
     Ok(())

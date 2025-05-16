@@ -14,7 +14,7 @@ license = "MIT/Apache-2.0"
 
 [dependencies]
 sqlite3ext-sys = { version="0.0.1", path="./sqlite3ext-sys" }
-sqlite-loadable-macros={version="0.0.3", path="./sqlite-loadable-macros"}
+sqlite-loadable-macros={ version="0.0.4", path="./sqlite-loadable-macros" }
 serde = { version="1.0.219", features = ["derive"] }
 serde_json = "1.0.140"
 bitflags = "2.9.1"

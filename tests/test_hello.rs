@@ -8,7 +8,7 @@ pub fn hello(context: *mut sqlite3_context, values: &[*mut sqlite3_value]) -> Re
     Ok(())
 }
 
-#[sqlite_entrypoint]
+#[unsafe(sqlite_entrypoint)]
 pub fn sqlite3_hello_init(db: *mut sqlite3) -> Result<()> {
     let flags = FunctionFlags::UTF8 | FunctionFlags::DETERMINISTIC;
     define_scalar_function(db, "hello", 1, hello, flags)?;

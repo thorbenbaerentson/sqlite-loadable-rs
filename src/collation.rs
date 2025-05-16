@@ -25,12 +25,12 @@ where
     ) -> i32
     where
         F: Fn(&[u8], &[u8]) -> i32,
-    {
+    { unsafe {
         let boxed_function: *mut F = func.cast::<F>();
         let a = std::slice::from_raw_parts(a_pointer as *const u8, a_size as usize);
         let b = std::slice::from_raw_parts(b_pointer as *const u8, b_size as usize);
         (*boxed_function)(a, b)
-    }
+    }}
     let cname = CString::new(name)?;
     let result = unsafe {
         sqlite3ext_collation_v2(

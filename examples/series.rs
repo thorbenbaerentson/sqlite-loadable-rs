@@ -162,7 +162,7 @@ impl VTabCursor for GenerateSeriesCursor {
     }
 }
 
-#[sqlite_entrypoint]
+#[unsafe(sqlite_entrypoint)]
 pub fn sqlite3_seriesrs_init(db: *mut sqlite3) -> Result<()> {
     define_table_function::<GenerateSeriesTable>(db, "generate_series_rs", None)?;
     Ok(())

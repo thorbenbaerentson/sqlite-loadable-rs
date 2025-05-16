@@ -8,7 +8,7 @@ pub fn add(context: *mut sqlite3_context, values: &[*mut sqlite3_value]) -> Resu
     Ok(())
 }
 
-#[sqlite_entrypoint]
+#[unsafe(sqlite_entrypoint)]
 pub fn sqlite3_manual_init(db: *mut sqlite3) -> Result<()> {
     define_scalar_function(db, "addx", 2, add, FunctionFlags::empty())?;
     Ok(())

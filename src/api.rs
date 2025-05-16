@@ -160,7 +160,7 @@ pub fn value_text_notnull<'a>(value: &*mut sqlite3_value) -> Result<&'a str, Err
 ///
 /// # Safety
 /// should this really be unsafe???
-pub unsafe fn value_pointer<T>(value: &*mut sqlite3_value, c_name: &[u8]) -> Option<*mut T> {
+pub unsafe fn value_pointer<T>(value: &*mut sqlite3_value, c_name: &[u8]) -> Option<*mut T> { unsafe {
     let result = sqlite3ext_value_pointer(
         value.to_owned(),
         c_name.as_ptr().cast::<c_char>().cast_mut(),
@@ -171,7 +171,7 @@ pub unsafe fn value_pointer<T>(value: &*mut sqlite3_value, c_name: &[u8]) -> Opt
     }
 
     Some(result.cast::<T>())
-}
+}}
 
 /// Returns the [`sqlite3_value_int`](https://www.sqlite.org/c3ref/value_blob.html) result
 /// from the given sqlite3_value, as i32.
@@ -269,9 +269,9 @@ pub fn result_text<S: AsRef<str>>(context: *mut sqlite3_context, text: S) -> cra
     }
     Ok(())
 }
-unsafe extern "C" fn result_text_destructor(raw: *mut c_void) {
+unsafe extern "C" fn result_text_destructor(raw: *mut c_void) { unsafe {
     drop(CString::from_raw(raw.cast::<c_char>()));
-}
+}}
 
 /// Calls [`sqlite3_result_int`](https://www.sqlite.org/c3ref/result_blob.html)
 /// to represent that a function returns an int32 with the given value.
@@ -357,9 +357,9 @@ pub fn result_subtype(context: *mut sqlite3_context, subtype: u8) {
     unsafe { sqlite3ext_result_subtype(context, subtype.into()) };
 }
 
-unsafe extern "C" fn pointer_destroy<T>(pointer: *mut c_void) {
+unsafe extern "C" fn pointer_destroy<T>(pointer: *mut c_void) { unsafe {
     drop(Box::from_raw(pointer.cast::<T>()))
-}
+}}
 
 /// [sqlite3_result_pointer](https://www.sqlite.org/bindptr.html)
 pub fn result_pointer<T>(context: *mut sqlite3_context, name: &[u8], object: T) {

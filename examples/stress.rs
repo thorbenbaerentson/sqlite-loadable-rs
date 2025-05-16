@@ -20,7 +20,7 @@ pub fn hello(context: *mut sqlite3_context, values: &[*mut sqlite3_value]) -> Re
 // compiled file is named "libhello.dylib" (or .so/.dll depending on your operating system),
 // SQLite by default will look for an entrypoint called "sqlite3_hello_init".
 // See "Loading an Extension" for more details <https://www.sqlite.org/loadext.html#loading_an_extension>
-#[sqlite_entrypoint]
+#[unsafe(sqlite_entrypoint)]
 pub fn sqlite3_stress_init(db: *mut sqlite3) -> Result<()> {
     let flags = FunctionFlags::UTF8 | FunctionFlags::DETERMINISTIC;
     define_scalar_function(db, "hello", 1, hello, flags)?;

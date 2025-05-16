@@ -38,7 +38,7 @@ fn connect(context: *mut sqlite3_context, values: &[*mut sqlite3_value]) -> Resu
     Ok(())
 }
 
-#[sqlite_entrypoint]
+#[unsafe(sqlite_entrypoint)]
 pub fn sqlite3_scalarrs_init(db: *mut sqlite3) -> Result<()> {
     let flags = FunctionFlags::UTF8 | FunctionFlags::DETERMINISTIC;
     define_scalar_function(db, "surround_rs", 1, surround, flags)?;

@@ -431,11 +431,11 @@ pub fn define_table_function_with_find<'vtab, T: VTabFind<'vtab> + 'vtab>(
 }
 
 // source: https://github.com/rusqlite/rusqlite/blob/12a6d3c1b1bdd58ca7103619b8a133e76d30decd/src/vtab/mod.rs#L931
-unsafe extern "C" fn destroy_aux<T>(p: *mut c_void) {
+unsafe extern "C" fn destroy_aux<T>(p: *mut c_void) { unsafe {
     if !p.is_null() {
         drop(Box::from_raw(p.cast::<T>()));
     }
-}
+}}
 
 /// Define a virtual table on the sqlite3 database connection. Optionally
 /// pass in an auxillary object, which
@@ -871,7 +871,7 @@ unsafe extern "C" fn rust_create<'vtab, T>(
 ) -> c_int
 where
     T: VTab<'vtab>,
-{
+{ unsafe {
     let aux = aux.cast::<T::Aux>();
     let args = match process_create_args(argc, argv) {
         Ok(args) => args,
@@ -900,7 +900,7 @@ where
             err.code()
         }
     }
-}
+}}
 
 /// <https://www.sqlite.org/vtab.html#the_xconnect_method>
 // TODO set error message properly
@@ -914,7 +914,7 @@ unsafe extern "C" fn rust_connect<'vtab, T>(
 ) -> c_int
 where
     T: VTab<'vtab>,
-{
+{ unsafe {
     let aux = aux.cast::<T::Aux>();
     let args = match process_create_args(argc, argv) {
         Ok(args) => args,
@@ -943,7 +943,7 @@ where
             err.code()
         }
     }
-}
+}}
 
 /// <https://www.sqlite.org/vtab.html#the_xbestindex_method>
 // TODO set error message properly
@@ -953,7 +953,7 @@ unsafe extern "C" fn rust_best_index<'vtab, T>(
 ) -> c_int
 where
     T: VTab<'vtab>,
-{
+{ unsafe {
     let vt = vtab.cast::<T>();
     match (*vt).best_index(IndexInfo { index_info }) {
         Ok(_) => SQLITE_OKAY,
@@ -962,28 +962,28 @@ where
             BestIndexError::Error => SQLITE_ERROR,
         },
     }
-}
+}}
 
 /// <https://www.sqlite.org/vtab.html#the_xdisconnect_method>
 // TODO set error message properly
 unsafe extern "C" fn rust_disconnect<'vtab, T>(vtab: *mut sqlite3_vtab) -> c_int
 where
     T: VTab<'vtab>,
-{
+{ unsafe {
     if vtab.is_null() {
         return SQLITE_OKAY;
     }
     let vtab = vtab.cast::<T>();
     drop(Box::from_raw(vtab));
     SQLITE_OKAY
-}
+}}
 
 /// <https://www.sqlite.org/vtab.html#the_xdestroy_method>
 // TODO set error message properly
 unsafe extern "C" fn rust_destroy<'vtab, T>(vtab: *mut sqlite3_vtab) -> c_int
 where
     T: VTab<'vtab>,
-{
+{ unsafe {
     if vtab.is_null() {
         return SQLITE_OKAY;
     }
@@ -992,7 +992,7 @@ where
         Ok(_) => SQLITE_OKAY,
         Err(err) => err.code(),
     }
-}
+}}
 
 /// <https://www.sqlite.org/vtab.html#the_xopen_method>
 // TODO set error message properly
@@ -1002,7 +1002,7 @@ unsafe extern "C" fn rust_open<'vtab, T: 'vtab>(
 ) -> c_int
 where
     T: VTab<'vtab>,
-{
+{ unsafe {
     let vt = vtab.cast::<T>();
     match (*vt).open() {
         Ok(cursor) => {
@@ -1012,7 +1012,7 @@ where
         }
         Err(err) => err.code(),
     }
-}
+}}
 
 // https://www.sqlite.org/vtab.html#the_xupdate_method
 #[derive(Debug)]
@@ -1092,66 +1092,66 @@ unsafe extern "C" fn rust_update<'vtab, T: 'vtab>(
 ) -> c_int
 where
     T: VTabWriteable<'vtab>,
-{
+{ unsafe {
     let vt = vtab.cast::<T>();
 
     match (*vt).update(determine_update_operation(argc, argv), p_rowid) {
         Ok(_) => SQLITE_OKAY,
         Err(err) => err.code(),
     }
-}
+}}
 
 /// <https://www.sqlite.org/vtab.html#the_xbegin_method>
 // TODO set error message properly
 unsafe extern "C" fn rust_begin<'vtab, T: 'vtab>(vtab: *mut sqlite3_vtab) -> c_int
 where
     T: VTabWriteableWithTransactions<'vtab>,
-{
+{ unsafe {
     let vt = vtab.cast::<T>();
     match (*vt).begin() {
         Ok(_) => SQLITE_OKAY,
         Err(err) => err.code(),
     }
-}
+}}
 
 /// <https://www.sqlite.org/vtab.html#the_xsync_method>
 // TODO set error message properly
 unsafe extern "C" fn rust_sync<'vtab, T: 'vtab>(vtab: *mut sqlite3_vtab) -> c_int
 where
     T: VTabWriteableWithTransactions<'vtab>,
-{
+{ unsafe {
     let vt = vtab.cast::<T>();
     match (*vt).sync() {
         Ok(_) => SQLITE_OKAY,
         Err(err) => err.code(),
     }
-}
+}}
 
 /// <https://www.sqlite.org/vtab.html#the_xrollback_method>
 // TODO set error message properly
 unsafe extern "C" fn rust_rollback<'vtab, T: 'vtab>(vtab: *mut sqlite3_vtab) -> c_int
 where
     T: VTabWriteableWithTransactions<'vtab>,
-{
+{ unsafe {
     let vt = vtab.cast::<T>();
     match (*vt).rollback() {
         Ok(_) => SQLITE_OKAY,
         Err(err) => err.code(),
     }
-}
+}}
 
 /// <https://www.sqlite.org/vtab.html#the_xcommit_method>
 // TODO set error message properly
 unsafe extern "C" fn rust_commit<'vtab, T: 'vtab>(vtab: *mut sqlite3_vtab) -> c_int
 where
     T: VTabWriteableWithTransactions<'vtab>,
-{
+{ unsafe {
     let vt = vtab.cast::<T>();
     match (*vt).commit() {
         Ok(_) => SQLITE_OKAY,
         Err(err) => err.code(),
     }
-}
+}}
 
 /// <https://www.sqlite.org/vtab.html#the_xfindfunction_method>
 // TODO set error message properly
@@ -1164,7 +1164,7 @@ unsafe extern "C" fn rust_find_function<'vtab, T: 'vtab>(
 ) -> c_int
 where
     T: VTabFind<'vtab>,
-{
+{ unsafe {
     let vt = vtab.cast::<T>();
     let name = CStr::from_ptr(name).to_bytes();
     let name = std::str::from_utf8_unchecked(name);
@@ -1179,18 +1179,18 @@ where
         }
         None => 0,
     }
-}
+}}
 
 /// <https://www.sqlite.org/vtab.html#the_xclose_method>
 // TODO set error message properly
 unsafe extern "C" fn rust_close<C>(cursor: *mut sqlite3_vtab_cursor) -> c_int
 where
     C: VTabCursor,
-{
+{ unsafe {
     let cr = cursor.cast::<C>();
     drop(Box::from_raw(cr));
     SQLITE_OKAY
-}
+}}
 
 /// <https://www.sqlite.org/vtab.html#the_xfilter_method>
 // TODO set error message properly
@@ -1203,7 +1203,7 @@ unsafe extern "C" fn rust_filter<C>(
 ) -> c_int
 where
     C: VTabCursor,
-{
+{ unsafe {
     use std::str;
     let idx_name = if idx_str.is_null() {
         None
@@ -1225,14 +1225,14 @@ where
             err.code()
         }
     }
-}
+}}
 
 /// <https://www.sqlite.org/vtab.html#the_xnext_method>
 // TODO set error message properly
 unsafe extern "C" fn rust_next<C>(cursor: *mut sqlite3_vtab_cursor) -> c_int
 where
     C: VTabCursor,
-{
+{ unsafe {
     let cr = cursor.cast::<C>();
     //cursor_error(cursor, (*cr).next())
     match (*cr).next() {
@@ -1246,17 +1246,17 @@ where
             err.code()
         }
     }
-}
+}}
 
 /// <https://www.sqlite.org/vtab.html#the_xeof_method>
 // TODO set error message properly
 unsafe extern "C" fn rust_eof<C>(cursor: *mut sqlite3_vtab_cursor) -> c_int
 where
     C: VTabCursor,
-{
+{ unsafe {
     let cr = cursor.cast::<C>();
     (*cr).eof() as c_int
-}
+}}
 
 /// <https://www.sqlite.org/vtab.html#the_xcolumn_method>
 // TODO set error message properly
@@ -1267,7 +1267,7 @@ unsafe extern "C" fn rust_column<C>(
 ) -> c_int
 where
     C: VTabCursor,
-{
+{ unsafe {
     let cr = cursor.cast::<C>();
     //result_error(ctx, (*cr).column(&mut ctxt, i))
     match (*cr).column(ctx, i) {
@@ -1281,7 +1281,7 @@ where
             err.code()
         }
     }
-}
+}}
 
 /// "A successful invocation of this method will cause *pRowid to be filled with the rowid of row
 /// that the virtual table cursor pCur is currently pointing at.
@@ -1291,7 +1291,7 @@ where
 unsafe extern "C" fn rust_rowid<C>(cursor: *mut sqlite3_vtab_cursor, p_rowid: *mut i64) -> c_int
 where
     C: VTabCursor,
-{
+{ unsafe {
     let cr = cursor.cast::<C>();
     match (*cr).rowid() {
         Ok(rowid) => {
@@ -1300,4 +1300,4 @@ where
         }
         Err(err) => err.code(),
     }
-}
+}}

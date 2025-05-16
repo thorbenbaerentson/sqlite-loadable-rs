@@ -11,7 +11,7 @@ fn compare(a: &[u8], b: &[u8]) -> i32 {
         Ordering::Greater => 1,
     }
 }
-#[sqlite_entrypoint]
+#[unsafe(sqlite_entrypoint)]
 pub fn sqlite3_test_collation_init(db: *mut sqlite3) -> Result<()> {
     define_collation(db, "test_collation", compare)?;
     Ok(())
