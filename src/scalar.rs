@@ -29,6 +29,7 @@ bitflags! {
     /// or sqlite3_create_window_function, as the 4th "eTextRep" parameter.
     /// Includes both the encoding options (utf8, utf16, etc.) and function-level parameters
     /// (deterministion, innocuous, etc.).
+    #[derive(Clone, Copy)]
     pub struct FunctionFlags: i32 {
         const UTF8 = SQLITE_UTF8 as i32;
         const UTF16LE = SQLITE_UTF16LE as i32;
@@ -62,7 +63,7 @@ fn create_function_v2(
             db,
             cname.as_ptr(),
             num_args,
-            func_flags.bits,
+            func_flags.bits(),
             p_app,
             x_func,
             x_step,
@@ -177,7 +178,7 @@ where
                 }
             }
         }
-        Box::into_raw(b);
+        // Box::into_raw(b);
     }
     create_function_v2(
         db,
@@ -278,7 +279,7 @@ where
                 }
             }
         }
-        Box::into_raw(b);
+        // Box::into_raw(b);
     }
 
     (x_func_wrapper::<F, T>, app_pointer.cast())

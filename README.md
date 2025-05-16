@@ -138,7 +138,7 @@ The [`examples/`](./examples/) directory has a few bare-bones examples of extens
 
 ```bash
 $ cargo build --example hello
-$ sqlite3 :memory: '.load target/debug/examples/hello' 'select hello("world");'
+$ sqlite3 :memory: '.load target/debug/examples/libhello' 'select hello("world");'
 hello, world!
 
 # Build all the examples in release mode, with output at target/debug/release/examples/*.dylib
